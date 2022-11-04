@@ -11,3 +11,30 @@ html {
     background-color: $theme-color-1 !important;
 }
 */
+
+
+.chicklet-list{
+    display: flex;
+    li{
+        margin: 5px;
+    }
+
+}
+.chicklet-list label {
+    display: block;
+    font-size: 16px;
+    font-weight: normal;
+    background: #ffffff;
+    border: 1px solid #cecece;
+    color: #000;
+    padding: 10px 35px;
+    text-align: center;
+    border-radius: 0;
+    cursor: pointer;
+    transition: all 0.1s ease-out;
+    border-radius: 6px;
+}
+
+donate-popup.style-four .chicklet-list :checked+label {
+    background: #cecece;
+}

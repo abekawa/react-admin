@@ -16,7 +16,7 @@ import { Button, Label, FormGroup, Card, CardBody } from 'reactstrap';
 const defaultValues = {
   locationType: 'work',
   locationQualities: ['beautiful', 'awesome', 'wonderful'],
-  firstname: 'Sarah',
+  firstname: 'Username',
   lastname: 'Kortney',
   location: {
     street: '10752 Deerwood Park Blvd',

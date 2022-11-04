@@ -1,7 +1,12 @@
+/* eslint-disable prettier/prettier */
+import jwtDecode from 'jwt-decode';
+
 import { all, call, fork, put, takeEvery } from 'redux-saga/effects';
 import { auth } from 'helpers/Firebase';
-import { adminRoot, currentUser } from 'constants/defaultValues';
+import { adminRoot, loginPath } from 'constants/defaultValues';
 import { setCurrentUser } from 'helpers/Utils';
+import { NotificationManager } from 'components/common/react-notifications';
+
 import {
   LOGIN_USER,
   REGISTER_USER,
@@ -11,9 +16,9 @@ import {
 } from '../contants';
 
 import {
-  loginUserSuccess,
+  // loginUserSuccess,
   loginUserError,
-  registerUserSuccess,
+  // registerUserSuccess,
   registerUserError,
   forgotPasswordSuccess,
   forgotPasswordError,
@@ -21,31 +26,62 @@ import {
   resetPasswordError,
 } from './actions';
 
+const axios = require('axios');
+
 export function* watchLoginUser() {
   // eslint-disable-next-line no-use-before-define
   yield takeEvery(LOGIN_USER, loginWithEmailPassword);
 }
 
-const loginWithEmailPasswordAsync = async (email, password) =>
-  // eslint-disable-next-line no-return-await
-  await auth
-    .signInWithEmailAndPassword(email, password)
-    .then((user) => user)
-    .catch((error) => error);
+// const loginWithEmailPasswordAsync = async (email, password) =>
+//   // eslint-disable-next-line no-return-await
+//   await auth
+//     .signInWithEmailAndPassword(email, password)
+//     .then((user) => user)
+//     .catch((error) => error);
+
+const loginWithEmailPasswordAsync = async (email, password) => {
+  const resp = await axios
+    .post('http://localhost:8000/api/login_check', {
+      username: email,
+      password,
+    })
+    .then((response) => {
+      if (response.data.token) {
+        localStorage.setItem('token', response.data.token);
+        return response;
+      }
+      return response;
+    })
+    .catch((error) => {
+      return error;
+    });
+  return resp;
+};
 
 function* loginWithEmailPassword({ payload }) {
   const { email, password } = payload.user;
   const { history } = payload;
   try {
     const loginUser = yield call(loginWithEmailPasswordAsync, email, password);
-    if (!loginUser.message) {
-      const item = { uid: loginUser.user.uid, ...currentUser };
-      setCurrentUser(item);
-      yield put(loginUserSuccess(item));
+    if (loginUser.data) {
+      const decoded = jwtDecode(loginUser.data.token); // Returns with the JwtPayload type
+      console.log(decoded);
+      localStorage.setItem('username', decoded.username);
       history.push(adminRoot);
     } else {
-      yield put(loginUserError(loginUser.message));
+      yield put(loginUserError('Usuário ou senha inválido(s)'));
     }
+
+    // if (true) {
+    //   const item = { uid: loginUser.user.uid, ...currentUser };
+    //   setCurrentUser(item);
+    //   yield put(loginUserSuccess(item));
+    //   history.push(adminRoot);
+    // } else {
+    //   console.log(loginUser);
+    //   // yield put(loginUserError(loginUser.message));
+    // }
   } catch (error) {
     yield put(loginUserError(error));
   }
@@ -56,12 +92,25 @@ export function* watchRegisterUser() {
   yield takeEvery(REGISTER_USER, registerWithEmailPassword);
 }
 
-const registerWithEmailPasswordAsync = async (email, password) =>
-  // eslint-disable-next-line no-return-await
-  await auth
-    .createUserWithEmailAndPassword(email, password)
-    .then((user) => user)
-    .catch((error) => error);
+const registerWithEmailPasswordAsync = async (email, password) => {
+  console.log(email, password);
+  const resp = await axios
+    .post('http://localhost:8000/api/register', {
+      username: email,
+      password,
+    })
+    .then((response) => {
+      if (response.data.status === 200) {
+        return response;
+      }
+      return response;
+    })
+    .catch((error) => {
+      return error;
+    });
+  console.log(resp);
+  return resp;
+};
 
 function* registerWithEmailPassword({ payload }) {
   const { email, password } = payload.user;
@@ -72,11 +121,23 @@ function* registerWithEmailPassword({ payload }) {
       email,
       password
     );
-    if (!registerUser.message) {
-      const item = { uid: registerUser.user.uid, ...currentUser };
-      setCurrentUser(item);
-      yield put(registerUserSuccess(item));
+    console.log(registerUser);
+    if (registerUser.status === 200) {
+      const loginUser = yield call(loginWithEmailPasswordAsync, email, password);
+      NotificationManager.error(
+        'Verifique os dados informados',
+        'Não foi possível realizar o cadastro',
+        3000,
+        null,
+        null,
+        ''
+      );
+      const decoded = jwtDecode(loginUser.data.token); // Returns with the JwtPayload type
+      console.log(decoded);
+      localStorage.setItem('username', decoded.username);
       history.push(adminRoot);
+      // const item = { uid: registerUser.user.uid, ...currentUser };
+      // setCurrentUser(item);
     } else {
       yield put(registerUserError(registerUser.message));
     }
@@ -91,11 +152,13 @@ export function* watchLogoutUser() {
 }
 
 const logoutAsync = async (history) => {
-  await auth
-    .signOut()
-    .then((user) => user)
-    .catch((error) => error);
-  history.push(adminRoot);
+  // await auth
+  //   .signOut()
+  //   .then((user) => user)
+  //   .catch((error) => error);
+  localStorage.clear();
+
+  history.push(loginPath);
 };
 
 function* logout({ payload }) {

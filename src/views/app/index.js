@@ -14,6 +14,9 @@ const SecondMenu = React.lazy(() =>
 const BlankPage = React.lazy(() =>
   import(/* webpackChunkName: "viwes-blank-page" */ './blank-page')
 );
+const Donate = React.lazy(() =>
+  import(/* webpackChunkName: "viwes-blank-page" */ './donate')
+);
 
 const App = ({ match }) => {
   return (
@@ -38,6 +41,10 @@ const App = ({ match }) => {
             <Route
               path={`${match.url}/blank-page`}
               render={(props) => <BlankPage {...props} />}
+            />
+            <Route
+              path={`${match.url}/donate`}
+              render={(props) => <Donate {...props} />}
             />
             <Redirect to="/error" />
           </Switch>

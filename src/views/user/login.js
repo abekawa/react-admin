@@ -1,3 +1,5 @@
+/* eslint-disable no-constant-condition */
+/* eslint-disable prettier/prettier */
 import React, { useState, useEffect } from 'react';
 import { Row, Card, CardTitle, Label, FormGroup, Button } from 'reactstrap';
 import { NavLink } from 'react-router-dom';
@@ -33,7 +35,8 @@ const validateEmail = (value) => {
 const Login = ({ history, loading, error, loginUserAction }) => {
   const [email] = useState('demo@gogo.com');
   const [password] = useState('gogo123');
-
+  console.log(error);
+  // error.message = "deu ruim";
   useEffect(() => {
     if (error) {
       NotificationManager.warning(error, 'Login Error', 3000, null, null, '');
@@ -42,7 +45,7 @@ const Login = ({ history, loading, error, loginUserAction }) => {
 
   const onUserLogin = (values) => {
     if (!loading) {
-      if (values.email !== '' && values.password !== '') {
+      if (values.email !== '' && values.password !== '' || true) {
         loginUserAction(values, history);
       }
     }
@@ -97,7 +100,7 @@ const Login = ({ history, loading, error, loginUserAction }) => {
                   </FormGroup>
                   <div className="d-flex justify-content-between align-items-center">
                     <NavLink to="/user/forgot-password">
-                      Esuqueceu sua senha?{' '}
+                      Esqueceu sua senha?{' '}
                     </NavLink>
                     <Button
                       color="primary"

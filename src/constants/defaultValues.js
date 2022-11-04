@@ -28,13 +28,15 @@ export const firebaseConfig = {
 };
 
 export const adminRoot = '/app';
+export const loginPath = '/user/login';
+
 export const buyUrl = 'https://1.envato.market/k4z0';
 export const searchPath = `${adminRoot}/#`;
 export const servicePath = 'https://api.coloredstrategies.com';
 
 export const currentUser = {
   id: 1,
-  title: 'Sarah Kortney',
+  title: '',
   img: '/assets/img/profiles/l-1.jpg',
   date: 'Last seen today 15:24',
   role: UserRole.Admin,

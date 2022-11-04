@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable no-use-before-define */
@@ -27,16 +28,14 @@ import {
   menuHiddenBreakpoint,
   searchPath,
   localeOptions,
-  isDarkSwitchActive,
-  buyUrl,
   adminRoot,
 } from 'constants/defaultValues';
 
 import { MobileMenuIcon, MenuIcon } from 'components/svg';
 import { getDirection, setDirection } from 'helpers/Utils';
-import TopnavEasyAccess from './Topnav.EasyAccess';
-import TopnavNotifications from './Topnav.Notifications';
-import TopnavDarkSwitch from './Topnav.DarkSwitch';
+// import TopnavEasyAccess from './Topnav.EasyAccess';
+// import TopnavNotifications from './Topnav.Notifications';
+// import TopnavDarkSwitch from './Topnav.DarkSwitch';
 
 const TopNav = ({
   intl,
@@ -44,7 +43,6 @@ const TopNav = ({
   containerClassnames,
   menuClickCount,
   selectedMenuHasSubItems,
-  locale,
   setContainerClassnamesAction,
   clickOnMobileMenuAction,
   logoutUserAction,
@@ -150,6 +148,8 @@ const TopNav = ({
     }
   };
 
+  const username = localStorage.getItem('username');
+
   const toggleFullScreen = () => {
     const isFS = isInFullScreenFn();
 
@@ -200,6 +200,8 @@ const TopNav = ({
     clickOnMobileMenuAction(_containerClassnames);
   };
 
+  // const user = localStorage.getItem('username');
+
   const { messages } = intl;
   return (
     <nav className="navbar fixed-top">
@@ -223,7 +225,7 @@ const TopNav = ({
           <MobileMenuIcon />
         </NavLink>
 
-        <div className="search">
+        <div className="search d-none">
           <Input
             name="searchKeyword"
             id="searchKeyword"
@@ -242,14 +244,14 @@ const TopNav = ({
 
         <div className="d-inline-block">
           <UncontrolledDropdown className="ml-2">
-            <DropdownToggle
+            {/* <DropdownToggle
               caret
               color="light"
               size="sm"
               className="language-button"
             >
               <span className="name">{locale.toUpperCase()}</span>
-            </DropdownToggle>
+            </DropdownToggle> */}
             <DropdownMenu className="mt-3" right>
               {localeOptions.map((l) => {
                 return (
@@ -264,28 +266,21 @@ const TopNav = ({
             </DropdownMenu>
           </UncontrolledDropdown>
         </div>
-        <div className="position-relative d-none d-none d-lg-inline-block">
-          <a
-            className="btn btn-outline-primary btn-sm ml-2"
-            target="_top"
-            href={buyUrl}
-          >
+        <div className="position-relative d-none d-none">
+          <a className="btn btn-outline-primary btn-sm ml-2" target="_top" href>
             <IntlMessages id="user.buy" />
           </a>
         </div>
       </div>
-      <NavLink className="navbar-logo" to={adminRoot}>
+      <NavLink className="navbar-logo admin-logo" to={adminRoot}>
         <span className="logo d-none d-xs-block" />
         <span className="logo-mobile d-block d-xs-none" />
       </NavLink>
 
       <div className="navbar-right">
-        {isDarkSwitchActive && <TopnavDarkSwitch />}
         <div className="header-icons d-inline-block align-middle">
-          <TopnavEasyAccess />
-          <TopnavNotifications />
           <button
-            className="header-icon btn btn-empty d-none d-sm-inline-block"
+            className="header-icon btn btn-empty d-none "
             type="button"
             id="fullScreenButton"
             onClick={toggleFullScreen}
@@ -300,19 +295,22 @@ const TopNav = ({
         <div className="user d-inline-block">
           <UncontrolledDropdown className="dropdown-menu-right">
             <DropdownToggle className="p-0" color="empty">
-              <span className="name mr-1">Sarah Kortney</span>
+              <span className="name mr-1">{username}</span>
               <span>
-                <img alt="Profile" src="/assets/img/profiles/l-1.jpg" />
+                <img
+                  alt="Profile"
+                  src="https://www.pngall.com/wp-content/uploads/5/Profile-Avatar-PNG.png"
+                />
               </span>
             </DropdownToggle>
             <DropdownMenu className="mt-3" right>
-              <DropdownItem>Account</DropdownItem>
+              {/* <DropdownItem>Account</DropdownItem>
               <DropdownItem>Features</DropdownItem>
               <DropdownItem>History</DropdownItem>
-              <DropdownItem>Support</DropdownItem>
-              <DropdownItem divider />
+              <DropdownItem>Support</DropdownItem> */}
+              {/* <DropdownItem divider /> */}
               <DropdownItem onClick={() => handleLogout()}>
-                Sign out
+                Sair do Sistema{' '}
               </DropdownItem>
             </DropdownMenu>
           </UncontrolledDropdown>
@@ -322,14 +320,14 @@ const TopNav = ({
   );
 };
 
-const mapStateToProps = ({ menu, settings }) => {
+const mapStateToProps = ({ menu }) => {
   const { containerClassnames, menuClickCount, selectedMenuHasSubItems } = menu;
-  const { locale } = settings;
+  // const { locale } = settings;
   return {
     containerClassnames,
     menuClickCount,
     selectedMenuHasSubItems,
-    locale,
+    // locale,
   };
 };
 export default injectIntl(
